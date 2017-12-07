@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>b-PAC Printer</title>
+		<script language="javascript" type="text/javascript">
+
+			var DATA_FOLDER = null;
+
+			function initDir() {
+				DATA_FOLDER = document.getElementById('inputFile').value;
+				console.log(DATA_FOLDER);
+				// var files = document.getElementById('inputFile').files;
+				// var refToSelectBox = document.getElementById('selectBox');
+				// var firstLbxFile = null;
+				// for (var i = 0; i < files.length; i++) {
+				// 	if (files[i].name.search('lbx') != -1) {
+				// 		if (!firstLbxFile) {
+				// 			firstLbxFile = files[i].name;
+				// 		}
+				// 		refToSelectBox.innerHTML += '<option>' + files[i].name + '</option>';
+				// 	}
+				// }
+				// DATA_FOLDER = "C:\\prints\\" + firstLbxFile;
+			}
+
+			function DoPrint(strExport) {
+
+				if (!DATA_FOLDER || DATA_FOLDER.search('lbx') == -1) {
+					alert('Select a lbx file please...');
+					return -1;
+				}
+
+				var strPath = DATA_FOLDER;
+				// console.log(strPath);
+
+				var objDoc = new ActiveXObject("bpac.Document");
+				if (objDoc.Open(strPath) != false) {
+					if (strExport == "") {
+						// objDoc.SetMediaByName(objDoc.Printer.GetMediaName(), true);
+						alert('Printing File');
+						objDoc.StartPrint("", 0);
+						objDoc.PrintOut(1, 0);
+						objDoc.Close();
+						objDoc.EndPrint();
+					} else {
+						var fso = new ActiveXObject("Scripting.FileSystemObject");
+						var TEMP_FOLDER = fso.GetSpecialFolder(2);
+						strExport = TEMP_FOLDER + strExport;
+						objDoc.Export(4, strExport, 180);
+						objDoc.Close();
+						window.location.href = strExport;
+					}
+				}
+			}
+		</script>
+	</head>
+
+	<body style="color:White;background-color:#8080c0;">
+		<div>
+			<label>Select the file</label><br />
+			<input type="file" id="inputFile" onchange="initDir()" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+		</div>
+		<br />
+		<div>
+			<button onclick="DoPrint('Preview.bmp');">Preview</button>&nbsp;
+			<button onclick="DoPrint('');">Print</button>
+		</div>
+	</body>
+
+</html>
